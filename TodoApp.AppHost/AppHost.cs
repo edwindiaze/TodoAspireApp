@@ -1,13 +1,13 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var server = builder.AddProject<Projects.TodoApp_Server>("server")
+var api = builder.AddProject<Projects.TodoApp_Server>("server")
     .WithHttpHealthCheck("/health")
     .WithExternalHttpEndpoints();
 
-var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
-    .WithReference(server)
-    .WaitFor(server);
+var webfrontend = builder.AddViteApp("todo-ui", "../frontend")
+    .WithReference(api)
+    .WaitFor(api);
 
-server.PublishWithContainerFiles(webfrontend, "wwwroot");
+api.PublishWithContainerFiles(webfrontend, "wwwroot");
 
 builder.Build().Run();
