@@ -1,8 +1,2 @@
 <Solution>
-  <Project Path="frontend/todo-ui.esproj">
-    <Build />
-    <Deploy />
-  </Project>
-  <Project Path="TodoApp.AppHost/TodoApp.AppHost.csproj" />
-  <Project Path="TodoApp.Server/TodoApp.Server.csproj" />
 </Solution>
