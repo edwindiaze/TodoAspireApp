@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { api } from '../../../api';
 import type { Todo, TodoId, TodoFilter, TodoStats } from '../types';
 
 // Like a C# class with private fields and public methods
@@ -13,7 +14,7 @@ interface TodoState {
   getStats: () => TodoStats;
   
   // Actions (like C# methods)
-  addTodo: (title: string) => void;
+  addTodo: (title: string) => Promise<void>;
   toggleTodo: (id: TodoId) => void;
   deleteTodo: (id: TodoId) => void;
   setFilter: (filter: TodoFilter) => void;
@@ -47,9 +48,15 @@ export const useTodoStore = create<TodoState>()(
     },
 
     // Actions with Immer for immutable updates
-    addTodo: (title: string) => {
+    addTodo: async (title: string) => {
       const trimmed = title.trim();
       if (!trimmed) return;
+      
+      await api.post("/todoitems", {
+        id: 0,
+        name: trimmed,
+        isComplete: false
+      });
       
       set(state => {
         state.todos.push({

@@ -2,16 +2,22 @@ import { useState } from 'react';
 import type { SubmitEvent } from 'react';
 
 interface Props {
-  onAdd: (title: string) => void;
+  onAdd: (title: string) => Promise<void>;
 }
 
 export function TodoForm({ onAdd }: Props) {
   const [title, setTitle] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: SubmitEvent) => {
+  const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
-    onAdd(title);
-    setTitle('');
+    setIsLoading(true);
+    try {
+      await onAdd(title);
+      setTitle('');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -23,13 +29,14 @@ export function TodoForm({ onAdd }: Props) {
         placeholder="What needs to be done?"
         className="todo-input"
         autoFocus
+        disabled={isLoading}
       />
       <button 
         type="submit" 
-        disabled={!title.trim()}
+        disabled={!title.trim() || isLoading}
         className="btn btn-primary"
       >
-        Add
+        {isLoading ? 'Adding...' : 'Add'}
       </button>
     </form>
   );
